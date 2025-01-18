@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"io"
 
 	"github.com/kmio11/cobra-example/cmd/hello"
 	"github.com/spf13/cobra"
@@ -10,11 +9,6 @@ import (
 
 type RootCmd struct {
 	*cobra.Command
-}
-
-type SubCmd interface {
-	Command() *cobra.Command
-	SetWriter(out, err io.Writer)
 }
 
 func NewRoot() *cobra.Command {

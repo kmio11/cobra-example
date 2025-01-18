@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 	"io"
-	"os"
 
+	"github.com/kmio11/cobra-example/base"
 	"github.com/spf13/cobra"
 )
 
 type Command struct {
-	outWriter io.Writer
-	errWriter io.Writer
+	*base.Base
 	// Flag and Args
 	Name   string
 	Format string
@@ -19,22 +18,8 @@ type Command struct {
 
 func New() *Command {
 	return &Command{
-		outWriter: os.Stdout,
-		errWriter: os.Stderr,
+		Base: base.New(),
 	}
-}
-
-func (c *Command) SetWriter(out, err io.Writer) {
-	c.outWriter = out
-	c.errWriter = err
-}
-
-func (c *Command) SetOutWriter(w io.Writer) {
-	c.outWriter = w
-}
-
-func (c *Command) SetErrWriter(w io.Writer) {
-	c.errWriter = w
 }
 
 func (c *Command) Command() *cobra.Command {
@@ -45,10 +30,7 @@ func (c *Command) Command() *cobra.Command {
 		Args:          cobra.NoArgs,
 		SilenceUsage:  true,
 		SilenceErrors: false,
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			c.SetWriter(cmd.OutOrStdout(), cmd.ErrOrStderr())
-			return nil
-		},
+		PreRunE:       c.PreRunE,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 			return c.Execute(ctx)
@@ -69,10 +51,10 @@ func (c *Command) Execute(ctx context.Context) error {
 	}
 
 	if c.Format == "json" {
-		return printHelloJSON(c.outWriter, c.Name)
+		return printHelloJSON(c.Out(), c.Name)
 	}
 	if c.Format == "text" {
-		return printHello(c.outWriter, c.Name)
+		return printHello(c.Out(), c.Name)
 	}
 
 	return nil

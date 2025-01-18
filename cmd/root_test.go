@@ -23,8 +23,9 @@ func TestRootCmd_Execute(t *testing.T) {
 			args: []string{"hello", "--name", "world"},
 		},
 		{
-			name: "hello_invalid",
-			args: []string{"hello", "--name", "world", "--format", "invalid"},
+			name:    "hello_invalid",
+			args:    []string{"hello", "--name", "world", "--format", "invalid"},
+			wantErr: true,
 		},
 	}
 
